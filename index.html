@@ -1,0 +1,505 @@
+<div id="ma-tds-pure-standalone">
+    <style>
+        :root {
+            --ma-primary: #2563eb;
+            --ma-primary-hover: #1d4ed8;
+            --ma-bg-color: #ffffff;
+            --ma-surface: #f8fafc;
+            --ma-border: #e2e8f0;
+            --ma-text-main: #0f172a;
+            --ma-text-muted: #64748b;
+            --ma-success-bg: #f0fdf4;
+            --ma-success-border: #bbf7d0;
+            --ma-error-bg: #fef2f2;
+            --ma-error-text: #ef4444;
+            --ma-warning-bg: #fffbeb;
+            --ma-warning-border: #fde68a;
+        }
+
+        #ma-tds-pure-standalone {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            max-width: 750px;
+            margin: 0 auto;
+            color: var(--ma-text-main);
+        }
+
+        .ma-card {
+            background: var(--ma-bg-color);
+            border: 1px solid var(--ma-border);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            box-sizing: border-box;
+        }
+
+        .ma-header { font-size: 26px; font-weight: 700; margin: 0 0 8px 0; letter-spacing: -0.5px; }
+        .ma-subheader { color: var(--ma-text-muted); font-size: 14px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--ma-border); }
+        
+        .ma-input-group { margin-bottom: 20px; }
+        .ma-input-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #334155; }
+        
+        .ma-amt-flex { display: flex; align-items: stretch; }
+        .ma-amt-addon {
+            display: flex; align-items: center; padding: 0 16px;
+            background: #f1f5f9; border: 2px solid var(--ma-border); border-right: none;
+            border-radius: 8px 0 0 8px; color: var(--ma-text-muted); font-weight: 600; font-size: 18px;
+        }
+        .ma-input-group-field {
+            flex: 1; padding: 14px; font-size: 16px; border: 2px solid var(--ma-border);
+            border-radius: 0 8px 8px 0; outline: none; transition: border-color 0.2s; background: var(--ma-surface);
+            color: var(--ma-text-main);
+        }
+        .ma-input-group-field:focus { border-color: var(--ma-primary); background: white; }
+
+        .ma-select {
+            width: 100%; padding: 14px; font-size: 14px; border: 2px solid var(--ma-border);
+            border-radius: 8px; box-sizing: border-box; outline: none; transition: border-color 0.2s;
+            background: var(--ma-surface); color: var(--ma-text-main); cursor: pointer;
+        }
+        .ma-select:focus { border-color: var(--ma-primary); background: white; }
+        
+        .ma-radio-flex { display: flex; gap: 24px; margin-top: 8px; }
+        .ma-radio-label { display: flex; align-items: center; font-size: 14px; cursor: pointer; color: #475569; }
+        .ma-radio-label input { margin-right: 8px; accent-color: var(--ma-primary); width: 16px; height: 16px; }
+
+        .ma-smart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .ma-statutory-note { display: block; font-size: 13px; color: #475569; background: #f1f5f9; padding: 12px; border-radius: 6px; margin-top: 10px; border-left: 3px solid var(--ma-primary); line-height: 1.5; }
+
+        .ma-compliance-section {
+            background: #fdfdfd; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 24px; margin-top: 25px; margin-bottom: 25px;
+        }
+
+        .ma-compliance-stack { display: flex; flex-direction: column; gap: 20px; margin-top: 15px; }
+        .ma-compliance-block { border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+        .ma-compliance-block:last-child { border-bottom: none; padding-bottom: 0; }
+        
+        .ma-date-group { display: flex; flex-direction: column; margin-top: 8px; }
+        .ma-date-label { font-size: 12px; color: #64748b; margin-bottom: 4px; font-weight: 500; }
+        .ma-date-input {
+            width: 100%; padding: 10px 14px; font-size: 14px; border: 1px solid #cbd5e1;
+            border-radius: 6px; box-sizing: border-box; background: #ffffff; color: var(--ma-text-main); font-family: inherit;
+        }
+
+        .ma-calc-btn {
+            width: 100%; background: var(--ma-primary); color: white; border: none; padding: 16px;
+            font-size: 16px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s;
+        }
+        .ma-calc-btn:hover { background: var(--ma-primary-hover); }
+        .ma-calc-btn:active { transform: scale(0.98); }
+
+        #ma-tds-result-container {
+            display: none; margin-top: 24px; padding: 24px; border-radius: 8px; animation: maFadeIn 0.4s ease-out;
+        }
+
+        .ma-result-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
+        .ma-result-total {
+            display: flex; justify-content: space-between; font-size: 18px; font-weight: 800;
+            margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--ma-success-border);
+        }
+
+        @keyframes maFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+
+    <div class="ma-card">
+        <h2 class="ma-header">TDS & Compliance Calculator</h2>
+        <div class="ma-subheader">Advanced Statutory Engine • Intelligent Due Date & Threshold Processing</div>
+
+        <div class="ma-input-group">
+            <label class="ma-input-label">Gross Transaction / Payment Amount</label>
+            <div class="ma-amt-flex">
+                <span class="ma-amt-addon">₹</span>
+                <input type="text" id="ma-tds-val" class="ma-input-group-field" placeholder="e.g., 1,50,000">
+            </div>
+        </div>
+
+        <div class="ma-input-group">
+            <label class="ma-input-label">Nature of Payment / Section Code</label>
+            <select id="ma-tds-sec" class="ma-select">
+                <optgroup label="Section 392 (Salary & EPF)">
+                    <option value="392_epf">Sec 392 (Old 192A) - EPF Premature Withdrawal</option>
+                </optgroup>
+                <optgroup label="Section 393 - Professionals & Contractors">
+                    <option value="393_194c">Sec 393 (Old 194C) - Payments to Contractors</option>
+                    <option value="393_194j_prof" selected>Sec 393 (Old 194J) - Professional Services</option>
+                    <option value="393_194j_tech">Sec 393 (Old 194J) - Technical Services</option>
+                    <option value="393_194m">Sec 393 (Old 194M) - Contract/Prof Fees (Ind/HUF)</option>
+                </optgroup>
+                <optgroup label="Section 393 - Rent & Property">
+                    <option value="393_194i_pm">Sec 393 (Old 194I) - Rent on Plant & Machinery</option>
+                    <option value="393_194i_lb">Sec 393 (Old 194I) - Rent on Land & Building</option>
+                    <option value="393_194ia">Sec 393 (Old 194IA) - Immovable Property Transfer</option>
+                    <option value="393_194ib">Sec 393 (Old 194IB) - Rent by Individual/HUF</option>
+                </optgroup>
+                <optgroup label="Section 393 - Commissions & Interests">
+                    <option value="393_193">Sec 393 (Old 193) - Interest on Securities</option>
+                    <option value="393_194a">Sec 393 (Old 194A) - Interest other than Securities</option>
+                    <option value="393_194d">Sec 393 (Old 194D) - Insurance Commission</option>
+                    <option value="393_194da">Sec 393 (Old 194DA) - Life Insurance Payout</option>
+                    <option value="393_194h">Sec 393 (Old 194H) - Commission or Brokerage</option>
+                </optgroup>
+                <optgroup label="Section 393 - Speculative & Goods">
+                    <option value="393_194b">Sec 393 (Old 194B) - Lottery Winnings</option>
+                    <option value="393_194ba">Sec 393 (Old 194BA) - Online Game Winnings</option>
+                    <option value="393_194s">Sec 393 (Old 194S) - Virtual Digital Assets (VDAs)</option>
+                    <option value="393_194ff">Sec 393 (Old 194Q) - Purchase of Goods</option>
+                    <option value="393_194t">Sec 393 (Old 194T) - Payment by Firm to Partners</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 32px; margin-bottom: 20px;">
+            <div>
+                <label class="ma-input-label">Is Deductee PAN Available?</label>
+                <div class="ma-radio-flex">
+                    <label class="ma-radio-label"><input type="radio" name="ma-pan-stat" value="yes" checked> Yes</label>
+                    <label class="ma-radio-label"><input type="radio" name="ma-pan-stat" value="no"> No</label>
+                </div>
+            </div>
+            <div>
+                <label class="ma-input-label">Deductee Entity Type</label>
+                <div class="ma-radio-flex">
+                    <label class="ma-radio-label"><input type="radio" name="ma-ent-type" value="ind_huf" checked> Individual / HUF</label>
+                    <label class="ma-radio-label"><input type="radio" name="ma-ent-type" value="others"> Corporate / Firm</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="ma-compliance-section">
+            <span style="font-weight: 700; font-size: 14px; color: #1e3a8a; display: block; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 16px;">
+                📅 Statutory Audit & Delay Verification (Optional)
+            </span>
+
+            <div class="ma-smart-grid">
+                <div>
+                    <label class="ma-input-label">Tax Year</label>
+                    <select id="ma-fy-select" class="ma-select" onchange="maUpdateUIDates()">
+                        <option value="2026">2026-27</option>
+                        <option value="2027">2027-28</option>
+                        <option value="2028">2028-29</option>
+                        <option value="2029">2029-30</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="ma-input-label">Month (Liability)</label>
+                    <select id="ma-month-select" class="ma-select" onchange="maUpdateUIDates()">
+                        <option value="0">Select Month...</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="ma-input-label">Quarter (Return)</label>
+                    <select id="ma-qtr-select" class="ma-select" onchange="maUpdateUIDates()">
+                        <option value="0">Select Qtr...</option>
+                        <option value="Q1">Q1 (Apr-Jun)</option>
+                        <option value="Q2">Q2 (Jul-Sep)</option>
+                        <option value="Q3">Q3 (Oct-Dec)</option>
+                        <option value="Q4">Q4 (Jan-Mar)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="ma-dates-display" class="ma-statutory-note" style="display: none;"></div>
+            
+            <div class="ma-compliance-stack">
+                <div class="ma-compliance-block">
+                    <span style="font-size: 13px; font-weight: 700; color: #475569; display: block;">1. Actual Date of Deduction</span>
+                    <div class="ma-date-group">
+                        <span class="ma-date-label">When was the TDS actually deducted from the payment?</span>
+                        <input type="date" id="ma-date-act-deduct" class="ma-date-input">
+                    </div>
+                </div>
+
+                <div class="ma-compliance-block">
+                    <span style="font-size: 13px; font-weight: 700; color: #475569; display: block;">2. Actual Date of Deposit (Challan Date)</span>
+                    <div class="ma-date-group">
+                        <span class="ma-date-label">When was the TDS deposited to the government?</span>
+                        <input type="date" id="ma-date-act-deposit" class="ma-date-input">
+                    </div>
+                </div>
+
+                <div class="ma-compliance-block">
+                    <span style="font-size: 13px; font-weight: 700; color: #475569; display: block;">3. Actual Date of Statement Filing</span>
+                    <div class="ma-date-group">
+                        <span class="ma-date-label">When was the quarterly TDS return filed?</span>
+                        <input type="date" id="ma-date-act-filing" class="ma-date-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="ma-calc-btn" onclick="maRunComprehensiveTDS()">Compute Total Liability</button>
+
+        <div id="ma-tds-result-container"></div>
+    </div>
+</div>
+
+<script>
+const maStatutoryRules = {
+    "392_epf": { rate: 10, limit: 50000, name: "Section 392 (Old 192A) - EPF Withdrawal" },
+    "393_193": { rate: 10, limit: 10000, name: "Section 393 (Old 193) - Interest on Securities" },
+    "393_194a": { rate: 10, limit: 50000, name: "Section 393 (Old 194A) - Interest (Other)" }, 
+    "393_194b": { rate: 30, limit: 10000, name: "Section 393 (Old 194B) - Lottery Winnings" },
+    "393_194ba": { rate: 30, limit: 0, name: "Section 393 (Old 194BA) - Online Gaming" },
+    "393_194c": { rate: 2, rateInd: 1, limit: 100000, name: "Section 393 (Old 194C) - Contractor Works", isContractor: true },
+    "393_194d": { rate: 2, limit: 20000, name: "Section 393 (Old 194D) - Insurance Commission" },
+    "393_194da": { rate: 2, limit: 100000, name: "Section 393 (Old 194DA) - LIC Policy Payout" },
+    "393_194h": { rate: 2, limit: 20000, name: "Section 393 (Old 194H) - Commission/Brokerage" },
+    "393_194i_pm": { rate: 2, limit: 600000, name: "Section 393 (Old 194I) - Rent on Machinery" }, 
+    "393_194i_lb": { rate: 10, limit: 600000, name: "Section 393 (Old 194I) - Rent on Property" },
+    "393_194ia": { rate: 1, limit: 5000000, name: "Section 393 (Old 194IA) - Property Transfer" },
+    "393_194ib": { rate: 2, limit: 600000, name: "Section 393 (Old 194IB) - Rent by Ind/HUF" },
+    "393_194j_prof": { rate: 10, limit: 50000, name: "Section 393 (Old 194J) - Professional Fees" },
+    "393_194j_tech": { rate: 2, limit: 50000, name: "Section 393 (Old 194J) - Technical/Call Center" },
+    "393_194m": { rate: 2, limit: 5000000, name: "Section 393 (Old 194M) - Ind/HUF Comm/Contract" },
+    "393_194s": { rate: 1, limit: 10000, name: "Section 393 (Old 194S) - Crypto / VDAs" },
+    "393_194ff": { rate: 0.1, limit: 5000000, name: "Section 393 (Old 194Q) - Purchase of Goods", taxOnExcessOnly: true },
+    "393_194t": { rate: 10, limit: 20000, name: "Section 393 (Old 194T) - Firm Payment to Partner" }
+};
+
+function maParseDateLocal(dateStr) {
+    if (!dateStr) return null;
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return null;
+    return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+}
+
+function maUpdateUIDates() {
+    const fyStr = document.getElementById('ma-fy-select').value;
+    const month = document.getElementById('ma-month-select').value;
+    const qtr = document.getElementById('ma-qtr-select').value;
+    const displayDiv = document.getElementById('ma-dates-display');
+    
+    const fyYear = parseInt(fyStr, 10); 
+    let datesText = "";
+
+    if (month !== "0") {
+        let mIndex = parseInt(month, 10);
+        let depYear = (mIndex >= 1 && mIndex <= 3) ? fyYear + 1 : fyYear;
+        
+        let uiDeductible = new Date(depYear, mIndex, 0);
+        let uiDueDeposit = (mIndex === 3) ? new Date(depYear, 3, 30) : new Date(depYear, mIndex, 7);
+        
+        const opts = { year: 'numeric', month: 'short', day: 'numeric' };
+        datesText += `Deduction Due Date: <span style="font-weight:700; color:var(--ma-primary);">${uiDeductible.toLocaleDateString('en-IN', opts)}</span> | `;
+        datesText += `Deposit Due Date: <span style="font-weight:700; color:var(--ma-primary);">${uiDueDeposit.toLocaleDateString('en-IN', opts)}</span><br>`;
+    }
+
+    if (qtr !== "0") {
+        let uiDueFiling;
+        if (qtr === "Q1") uiDueFiling = new Date(fyYear, 6, 31); 
+        else if (qtr === "Q2") uiDueFiling = new Date(fyYear, 9, 31); 
+        else if (qtr === "Q3") uiDueFiling = new Date(fyYear + 1, 0, 31); 
+        else if (qtr === "Q4") uiDueFiling = new Date(fyYear + 1, 4, 31); 
+        
+        const opts = { year: 'numeric', month: 'short', day: 'numeric' };
+        datesText += `Return Filing Due Date: <span style="font-weight:700; color:var(--ma-primary);">${uiDueFiling.toLocaleDateString('en-IN', opts)}</span>`;
+    }
+
+    if (datesText !== "") {
+        displayDiv.innerHTML = datesText;
+        displayDiv.style.display = 'block';
+    } else {
+        displayDiv.style.display = 'none';
+    }
+}
+
+// Corrected function logic for Section 201(1A) compliance 
+function maGetMonthsInvolved(startDate, endDate) {
+    if (!startDate || !endDate) return 0;
+    let startMonthVal = startDate.getFullYear() * 12 + startDate.getMonth();
+    let endMonthVal = endDate.getFullYear() * 12 + endDate.getMonth();
+    return (endMonthVal - startMonthVal) + 1;
+}
+
+function maGetDaysDiff(startVal, endVal) {
+    if (!startVal || !endVal) return 0;
+    const diffTime = Math.abs(endVal - startVal);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+function maRunComprehensiveTDS() {
+    const rawVal = document.getElementById('ma-tds-val').value;
+    const amount = parseFloat(rawVal.replace(/,/g, '')) || 0;
+    
+    const sectionKey = document.getElementById('ma-tds-sec').value;
+    const panAvailable = document.querySelector('input[name="ma-pan-stat"]:checked').value;
+    const entType = document.querySelector('input[name="ma-ent-type"]:checked').value;
+    
+    const fyStr = document.getElementById('ma-fy-select').value;
+    const monthSelected = document.getElementById('ma-month-select').value;
+    const qtrSelected = document.getElementById('ma-qtr-select').value;
+    
+    const actDedDate = maParseDateLocal(document.getElementById('ma-date-act-deduct').value);
+    const actDepDate = maParseDateLocal(document.getElementById('ma-date-act-deposit').value);
+    const actFilDate = maParseDateLocal(document.getElementById('ma-date-act-filing').value);
+
+    const resultBox = document.getElementById('ma-tds-result-container');
+
+    if (amount <= 0) {
+        resultBox.style.background = 'var(--ma-error-bg)';
+        resultBox.style.border = '1px solid #fecaca';
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = '<span style="color: var(--ma-error-text); font-weight: 600;">Please enter a valid base transaction amount.</span>';
+        return;
+    }
+
+    const rule = maStatutoryRules[sectionKey];
+    let activeRate = rule.rate;
+    if (rule.isContractor && entType === 'ind_huf' && rule.rateInd) {
+        activeRate = rule.rateInd;
+    }
+
+    let isPanDefault = false;
+    if (panAvailable === 'no') {
+        activeRate = 20; 
+        isPanDefault = true;
+    }
+
+    const fmt = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+
+    if (amount <= rule.limit) {
+        resultBox.style.background = 'var(--ma-surface)';
+        resultBox.style.border = '1px solid var(--ma-border)';
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `
+            <div style="color: var(--ma-text-main); font-weight: 700; margin-bottom: 8px; font-size: 16px;">TDS Deduction Not Required</div>
+            <div style="font-size: 14px; color: var(--ma-text-muted); line-height: 1.5;">The amount is within the statutory safe-harbor threshold limit of <strong>${fmt.format(rule.limit)}</strong> for ${rule.name}.</div>
+        `;
+        return;
+    }
+
+    let baseTds = 0;
+    if (rule.taxOnExcessOnly) {
+        baseTds = (amount - rule.limit) * (activeRate / 100);
+    } else {
+        baseTds = amount * (activeRate / 100);
+    }
+    
+    const fyYear = parseInt(fyStr, 10);
+    let calcDeductible = null;
+    let calcDueDeposit = null;
+    let calcDueFiling = null;
+
+    if (monthSelected !== "0") {
+        let mIndex = parseInt(monthSelected, 10);
+        let depYear = (mIndex >= 1 && mIndex <= 3) ? fyYear + 1 : fyYear;
+        calcDeductible = new Date(depYear, mIndex, 0); 
+        if (mIndex === 3) {
+            calcDueDeposit = new Date(depYear, 3, 30);
+        } else {
+            calcDueDeposit = new Date(depYear, mIndex, 7);
+        }
+    }
+
+    if (qtrSelected !== "0") {
+        if (qtrSelected === "Q1") calcDueFiling = new Date(fyYear, 6, 31); 
+        else if (qtrSelected === "Q2") calcDueFiling = new Date(fyYear, 9, 31); 
+        else if (qtrSelected === "Q3") calcDueFiling = new Date(fyYear + 1, 0, 31); 
+        else if (qtrSelected === "Q4") calcDueFiling = new Date(fyYear + 1, 4, 31); 
+    }
+    
+    let interestLateDeduction = 0;
+    let interestLateDeposit = 0;
+    let statutoryFilingFee = 0;
+    let delayDeductMonths = 0;
+    let delayDepositMonths = 0;
+    let delayFilingDays = 0;
+    let missingInputWarning = "";
+
+    if (actDedDate && monthSelected === "0") missingInputWarning += `<div style="margin-top: 10px; font-size: 12px; color: #b45309; background: var(--ma-warning-bg); padding: 12px; border-radius: 6px; border: 1px solid var(--ma-warning-border);">⚠️ <strong>Month Required:</strong> Select the Liability Month above to calculate late deduction interest.</div>`;
+    if (actDepDate && !actDedDate) missingInputWarning += `<div style="margin-top: 10px; font-size: 12px; color: #b45309; background: var(--ma-warning-bg); padding: 12px; border-radius: 6px; border: 1px solid var(--ma-warning-border);">⚠️ <strong>Deduction Date Required:</strong> Late Deposit interest legally runs from the date of deduction. Please enter the Actual Date of Deduction.</div>`;
+    if (actFilDate && qtrSelected === "0") missingInputWarning += `<div style="margin-top: 10px; font-size: 12px; color: #b45309; background: var(--ma-warning-bg); padding: 12px; border-radius: 6px; border: 1px solid var(--ma-warning-border);">⚠️ <strong>Quarter Required:</strong> Select the Quarter above to calculate Sec 234E late filing fees.</div>`;
+
+    // Replaced the subtraction logic here with the TRACES compliant month counter
+    if (monthSelected !== "0" && calcDeductible && actDedDate) {
+        if (actDedDate > calcDeductible) {
+            delayDeductMonths = maGetMonthsInvolved(calcDeductible, actDedDate);
+            interestLateDeduction = baseTds * 0.01 * delayDeductMonths;
+        }
+    }
+
+    // Replaced the subtraction logic here with the TRACES compliant month counter
+    if (monthSelected !== "0" && calcDueDeposit && actDedDate && actDepDate) {
+        if (actDepDate > calcDueDeposit) {
+            delayDepositMonths = maGetMonthsInvolved(actDedDate, actDepDate);
+            if (delayDepositMonths > 0) {
+                interestLateDeposit = baseTds * 0.015 * delayDepositMonths;
+            }
+        }
+    }
+
+    if (qtrSelected !== "0" && calcDueFiling && actFilDate) {
+        if (actFilDate > calcDueFiling) {
+            delayFilingDays = maGetDaysDiff(calcDueFiling, actFilDate);
+            statutoryFilingFee = delayFilingDays * 200;
+            if (statutoryFilingFee > baseTds) {
+                statutoryFilingFee = baseTds;
+            }
+        }
+    }
+
+    const totalGovernmentLiability = baseTds + interestLateDeduction + interestLateDeposit + statutoryFilingFee;
+    const netToDeductee = amount - baseTds;
+    const valuesPresent = (interestLateDeduction > 0 || interestLateDeposit > 0 || statutoryFilingFee > 0);
+    
+    resultBox.style.display = 'block';
+    
+    if (valuesPresent || missingInputWarning !== "") {
+        resultBox.style.background = 'var(--ma-error-bg)';
+        resultBox.style.border = '1px solid #fca5a5';
+    } else {
+        resultBox.style.background = 'var(--ma-success-bg)';
+        resultBox.style.border = '1px solid var(--ma-success-border)';
+    }
+
+    resultBox.innerHTML = `
+        <div class="ma-result-row" style="margin-bottom: 16px; border-bottom: 1px dashed var(--ma-border); padding-bottom: 8px;">
+            <span style="font-weight: 600; color: var(--ma-text-main);">Provision Scope:</span>
+            <span style="font-weight: 600; color: var(--ma-primary); text-align: right; max-width: 65%; font-size: 14px;">${rule.name}</span>
+        </div>
+        <div class="ma-result-row">
+            <span style="color: var(--ma-text-muted);">Base TDS Withholding (${activeRate}%):</span>
+            <span style="font-weight: 600;">${fmt.format(baseTds)}</span>
+        </div>
+        ${interestLateDeduction > 0 ? `
+        <div class="ma-result-row">
+            <span style="color: var(--ma-text-muted);">Sec 201(1A) Late Deduction Interest (1% x ${delayDeductMonths} mo):</span>
+            <span style="font-weight: 600; color: var(--ma-error-text);">${fmt.format(interestLateDeduction)}</span>
+        </div>` : ''}
+        ${interestLateDeposit > 0 ? `
+        <div class="ma-result-row">
+            <span style="color: var(--ma-text-muted);">Sec 201(1A) Late Deposit Interest (1.5% x ${delayDepositMonths} mo):</span>
+            <span style="font-weight: 600; color: var(--ma-error-text);">${fmt.format(interestLateDeposit)}</span>
+        </div>` : ''}
+        ${statutoryFilingFee > 0 ? `
+        <div class="ma-result-row" style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid var(--ma-border);">
+            <span style="color: var(--ma-text-muted);">Sec 234E Filing Fees (${delayFilingDays} days):</span>
+            <span style="font-weight: 600; color: var(--ma-error-text);">${fmt.format(statutoryFilingFee)} ${statutoryFilingFee === baseTds ? '(Capped)' : ''}</span>
+        </div>` : ''}
+        <div class="ma-result-row" style="font-size: 14px; margin-top: 15px;">
+            <span style="color: var(--ma-text-muted);">Net Liquidity Disbursed to Recipient:</span>
+            <span style="font-weight: 600; color: #15803d;">${fmt.format(netToDeductee)}</span>
+        </div>
+        <div class="ma-result-total" style="color: ${valuesPresent ? 'var(--ma-error-text)' : '#14532d'}">
+            <span>Total Payable to Treasury:</span>
+            <span>${fmt.format(totalGovernmentLiability)}</span>
+        </div>
+        ${rule.taxOnExcessOnly ? '<div style="margin-top: 15px; font-size: 11px; color: #0284c7; background: #e0f2fe; padding: 10px; border-radius: 6px; border: 1px solid #bae6fd;">* Note: For this specific section, TDS is legally calculated only on the sum exceeding the statutory threshold of <strong>' + fmt.format(rule.limit) + '</strong>, not the entire base amount.</div>' : ''}
+        ${isPanDefault ? '<div style="margin-top: 10px; font-size: 11px; color: #9a3412; background: var(--ma-warning-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--ma-warning-border);">* Note: Statutory 20% minimum applied u/s 206AA because PAN is declared unavailable.</div>' : ''}
+        ${missingInputWarning}
+    `;
+    
+    resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
